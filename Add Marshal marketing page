@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marshal — one MCP server, any AI assistant, your whole deploy stack</title>
+<meta name="description" content="Marshal is an MCP server that lets any AI assistant push code, run your tests, and deploy across GitHub or GitLab, Vercel, Netlify, Docker, or SSH — all from one config file. Built by Local Logic Management.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* ---------- hero ---------- */
+  .hero{padding:96px 0 80px; overflow:hidden;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; margin-top:28px;}
+  .hero h1{font-size:50px; line-height:1.08; font-weight:700; margin-top:22px; letter-spacing:-.02em;}
+  .hero h1 em{font-style:normal; color:var(--accent);}
+  .hero p.lede{font-size:17.5px; color:var(--text-muted); margin-top:22px; max-width:520px;}
+  .hero-actions{display:flex; align-items:center; gap:16px; margin-top:34px;}
+  .hero-note{font-size:13px; color:var(--text-dim); margin-top:18px;}
+
+  /* platform strip */
+  .platforms{border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--bg-elevated);}
+  .platforms-inner{display:flex; align-items:center; justify-content:space-between; gap:24px; padding:26px 0; flex-wrap:wrap;}
+  .platforms-label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; font-weight:600; white-space:nowrap;}
+  .platform-chips{display:flex; gap:10px; flex-wrap:wrap;}
+  .chip{
+    font-family:var(--font-mono); font-size:13px; color:var(--text-muted);
+    border:1px solid var(--border); background:var(--bg-card); padding:7px 14px; border-radius:100px;
+  }
+
+  /* how it works */
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .step{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:26px 22px;}
+  .step .n{font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--accent);}
+  .step h3{font-size:17px; margin-top:14px; font-weight:600;}
+  .step p{font-size:14px; color:var(--text-muted); margin-top:10px;}
+  .step .call{margin-top:14px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim); background:var(--bg-elevated); border:1px solid var(--border); border-radius:8px; padding:8px 10px; overflow-x:auto; white-space:nowrap;}
+
+  /* feature grid */
+  .features{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .feature{background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px;}
+  .feature .icon{
+    width:38px; height:38px; border-radius:10px; background:var(--accent-soft);
+    display:flex; align-items:center; justify-content:center; color:var(--accent); margin-bottom:18px;
+  }
+  .feature h3{font-size:16.5px; font-weight:600;}
+  .feature p{font-size:14px; color:var(--text-muted); margin-top:10px;}
+
+  /* config section */
+  .config-grid{display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start;}
+  .config-notes{padding-top:6px;}
+  .config-note{display:flex; gap:14px; margin-bottom:24px;}
+  .config-note .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:7px; flex-shrink:0;}
+  .config-note h4{font-size:15px; font-weight:600;}
+  .config-note p{font-size:13.5px; color:var(--text-muted); margin-top:6px;}
+  .fine-print{font-size:12px; color:var(--text-dim); margin-top:22px;}
+
+  /* roadmap */
+  .roadmap{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .road-card{border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:relative;}
+  .road-card.now{background:var(--bg-card);}
+  .road-card.next{background:transparent; border-style:dashed;}
+  .road-tag{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:4px 10px; border-radius:100px; display:inline-block; margin-bottom:14px;}
+  .road-tag.now{background:var(--ship-soft); color:var(--ship);}
+  .road-tag.next{background:var(--bg-elevated); color:var(--text-dim); border:1px solid var(--border);}
+  .road-card h3{font-size:16px; font-weight:600;}
+  .road-card ul{margin:12px 0 0; padding-left:18px; font-size:13.5px; color:var(--text-muted);}
+  .road-card li{margin-bottom:6px;}
+
+  /* trust */
+  .trust{
+    background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px;
+    padding:44px; display:flex; align-items:center; gap:36px;
+  }
+  .trust-mark{
+    width:56px; height:56px; border-radius:14px; background:var(--bg-card); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .trust h3{font-size:18px; font-weight:600;}
+  .trust p{font-size:14.5px; color:var(--text-muted); margin-top:8px; max-width:640px;}
+  .trust a{color:var(--accent); font-weight:600;}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr; gap:40px;}
+    .hero h1{font-size:36px;}
+    .steps, .features, .roadmap{grid-template-columns:1fr 1fr;}
+    .config-grid{grid-template-columns:1fr;}
+    .platforms-inner{justify-content:flex-start;}
+    .trust{flex-direction:column; text-align:center;}
+  }
+  @media (max-width:560px){
+    .steps, .features, .roadmap{grid-template-columns:1fr;}
+    .hero-actions{flex-wrap:wrap;}
+    .hero-actions .btn{flex:1 1 auto; justify-content:center;}
+    .trust{padding:32px 24px;}
+    .config-panel pre{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M4 8 12 13 4 18" stroke="#8b6cf0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 8 19 13 11 18" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 8 22 13 18 18" stroke="#f1eef9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Marshal
+      <span class="sub">by Local Logic Management</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#config">Config</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="https://www.locallogicmanagement.com" target="_blank" rel="noopener" class="nav-links-mobile-only">Local Logic Management ↗</a>
+      <a href="#signup" class="btn btn-primary nav-links-mobile-only">Request early access</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="https://www.locallogicmanagement.com" target="_blank" rel="noopener">Local Logic Management ↗</a>
+      <a class="btn btn-primary" href="#signup">Request early access</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="glow"></div>
+  <div class="wrap" style="position:relative; z-index:1;">
+    <span class="eyebrow"><span class="dot"></span> Private beta — accepting early access requests</span>
+    <div class="hero-grid">
+      <div>
+        <h1>Your AI assistant writes the code.<br><em>Marshal</em> gets it live.</h1>
+        <p class="lede">Marshal is an MCP server that gives any AI assistant a safe, direct line to your infrastructure — push code, run your real test suite, and deploy to the platform you already use. One config file per project, no bespoke integration per assistant.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#signup">Request early access</a>
+          <a class="btn btn-ghost" href="#config">See a sample config</a>
+        </div>
+        <p class="hero-note">Talks MCP, so it works with any assistant that speaks the protocol — not just one vendor's. <a href="#how" style="color:var(--text-muted); text-decoration:underline;">See how it works ↓</a></p>
+      </div>
+
+      <div class="mock" id="mock">
+        <div class="mock-head">
+          <span class="mock-title">marshal — acme/storefront</span>
+          <div class="mock-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div id="mockCards"></div>
+        <div class="mock-foot"><span class="pulse"></span> Watching for tool calls over MCP</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="platforms">
+  <div class="wrap platforms-inner">
+    <span class="platforms-label">Works with the stack you already run</span>
+    <div class="platform-chips">
+      <span class="chip">GitHub</span>
+      <span class="chip">GitLab</span>
+      <span class="chip">Vercel</span>
+      <span class="chip">Netlify</span>
+      <span class="chip">Docker</span>
+      <span class="chip">SSH</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">How it works</span>
+      <h2>Four tool calls, the same four steps every time.</h2>
+      <p>Marshal exposes a small set of MCP tools — connect, push, test, deploy — so any assistant gets the same predictable path from finished code to something running.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <h3>Connect</h3>
+        <p>Point Marshal at a repo and a deploy target once, in a single config file. Every assistant on the project shares that same connection.</p>
+        <div class="call">marshal.connect(repo, target)</div>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <h3>Push</h3>
+        <p>The assistant hands off finished code — Marshal commits it, opens a PR or pushes straight to a branch, per your config.</p>
+        <div class="call">marshal.push_code(files, branch)</div>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <h3>Test</h3>
+        <p>Your real test command runs in an isolated runner. Results — pass, fail, or the raw output — go back to the assistant, not just a green checkmark.</p>
+        <div class="call">marshal.run_tests()</div>
+      </div>
+      <div class="step">
+        <div class="n">04</div>
+        <h3>Deploy</h3>
+        <p>On a passing run, Marshal ships to the configured target. Anything short of green holds for your review instead of shipping anyway.</p>
+        <div class="call">marshal.deploy(target)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features" style="background:var(--bg-elevated); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Features</span>
+      <h2>Built to be the one integration you write.</h2>
+      <p>Every assistant that speaks MCP gets the same capabilities, the same guardrails, and the same audit trail — instead of a different plugin for each one.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>One config, any stack</h3>
+        <p>A single <code>marshal.config.yml</code> describes your git host, branch strategy, test command, and deploy target — no per-assistant setup.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3 3 8l5 5M16 3l5 5-5 5M14 3l-4 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Speaks MCP, not a vendor</h3>
+        <p>Any assistant that supports the Model Context Protocol can call Marshal's tools — swap assistants without rebuilding your deploy pipeline.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M4 6l8-3 8 3v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Tests gate every deploy</h3>
+        <p>Nothing ships without your own test command passing first — or an explicit, logged override when you need to move anyway.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Git-host agnostic</h3>
+        <p>GitHub and GitLab today, with the same push/PR semantics either way — so moving hosts doesn't mean re-learning the tooling.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Deploy anywhere</h3>
+        <p>Vercel, Netlify, a Docker registry, or plain SSH onto your own box — the assistant asks for a deploy, Marshal handles the platform-specific part.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 15l3-4 3 3 4-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>A full audit trail</h3>
+        <p>Every push, test run, and deploy Marshal executes is logged with which assistant and session asked for it — nothing happens off the record.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="config">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Configuration</span>
+      <h2>One file tells Marshal everything it needs.</h2>
+      <p>Sample configuration, shown for illustration — the shape your actual <code>marshal.config.yml</code> would take for a typical project.</p>
+    </div>
+    <div class="config-grid">
+      <div class="config-panel">
+        <div class="config-head"><span>marshal.config.yml</span></div>
+        <pre><span class="k">git</span>:
+  <span class="k">host</span>: github
+  <span class="k">repo</span>: acme/storefront
+  <span class="k">default_branch</span>: main
+  <span class="k">push_mode</span>: pull_request
+
+<span class="k">test</span>:
+  <span class="k">command</span>: npm test
+  <span class="k">required</span>: true
+
+<span class="k">deploy</span>:
+  <span class="k">target</span>: vercel
+  <span class="k">project</span>: storefront-prod
+  <span class="k">on</span>: tests_passed
+
+<span class="k">audit</span>:
+  <span class="k">log_to</span>: ./.marshal/audit.log</pre>
+      </div>
+      <div class="config-notes">
+        <div class="config-note">
+          <span class="dot"></span>
+          <div>
+            <h4>push_mode</h4>
+            <p>Choose <code>pull_request</code> for review-before-merge, or <code>direct</code> when a branch is meant to ship straight through.</p>
+          </div>
+        </div>
+        <div class="config-note">
+          <span class="dot"></span>
+          <div>
+            <h4>test.required</h4>
+            <p>When true, a failing or missing test run blocks the deploy step outright — the assistant gets the failure back, not a shipped bug.</p>
+          </div>
+        </div>
+        <div class="config-note">
+          <span class="dot"></span>
+          <div>
+            <h4>deploy.on</h4>
+            <p>Gate deploys on <code>tests_passed</code>, or set <code>manual</code> to require a human approval regardless of test outcome.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="fine-print">Marshal is currently in private beta. The config shape above reflects the current design and may still change before general release.</p>
+  </div>
+</section>
+
+<section class="section" id="roadmap" style="background:var(--bg-elevated); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Roadmap</span>
+      <h2>GitHub and the major deploy targets first. Here's what's next.</h2>
+      <p>We'd rather tell you exactly what's real today than oversell the vision. Here's where things stand.</p>
+    </div>
+    <div class="roadmap">
+      <div class="road-card now">
+        <span class="road-tag now">Live in beta</span>
+        <h3>Push, test, deploy</h3>
+        <ul>
+          <li>GitHub push &amp; PR tooling</li>
+          <li>Config-driven test running</li>
+          <li>Vercel, Netlify &amp; SSH deploys</li>
+        </ul>
+      </div>
+      <div class="road-card next">
+        <span class="road-tag next">Next up</span>
+        <h3>Broader platform support</h3>
+        <ul>
+          <li>GitLab push &amp; merge requests</li>
+          <li>Docker registry deploys</li>
+          <li>Per-tool approval policies</li>
+        </ul>
+      </div>
+      <div class="road-card next">
+        <span class="road-tag next">On the horizon</span>
+        <h3>Team &amp; scale</h3>
+        <ul>
+          <li>Shared audit dashboard</li>
+          <li>One-click deploy rollback</li>
+          <li>Multi-repo orchestration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="trust">
+      <div class="trust-mark">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M4 8 12 13 4 18" stroke="#8b6cf0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 8 19 13 11 18" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18 8 22 13 18 18" stroke="#f1eef9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Built by the team behind Local Logic Management's DevSecOps work</h3>
+        <p>Marshal comes out of the same practice that builds pipeline-security tooling like Warden for enterprise clients — the same emphasis on an auditable, explainable trail applies here to every push, test, and deploy. <a href="https://www.locallogicmanagement.com" target="_blank" rel="noopener">See our consulting work ↗</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="signup" style="padding-top:20px;">
+  <div class="wrap">
+    <div class="signup">
+      <h2>Get on the list for early access.</h2>
+      <p>We're onboarding projects in small batches while Marshal's platform support grows. Leave your email and we'll reach out when it's your turn.</p>
+      <form class="signup-form" id="signupForm">
+        <input type="email" id="signupEmail" placeholder="you@email.com" required>
+        <button class="btn btn-primary" type="submit">Request access</button>
+      </form>
+      <div class="form-msg" id="formMsg"></div>
+      <p class="signup-note">We'll only email you about Marshal access. No spam.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand" style="font-size:17px;">
+          <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+            <path d="M4 8 12 13 4 18" stroke="#8b6cf0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 8 19 13 11 18" stroke="#34d399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 8 22 13 18 18" stroke="#f1eef9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Marshal
+        </div>
+        <p>An MCP server that lets any AI assistant push code, run tests, and deploy across your git host and deploy platform of choice. Built by Local Logic Management.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#config">Config</a>
+          <a href="#roadmap">Roadmap</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="https://www.locallogicmanagement.com" target="_blank" rel="noopener">Local Logic Management</a>
+          <a href="https://www.locallogicmanagement.com#case-studies" target="_blank" rel="noopener">Case studies</a>
+          <a href="mailto:hello@locallogicmanagement.com">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Local Logic Management. Marshal is currently in private beta.</span>
+      <span>Timonium, MD</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // mobile menu (simple show/hide of nav links)
+  const toggle = document.getElementById('menuToggle');
+  const navLinks = document.querySelector('.nav-links');
+  toggle.addEventListener('click', () => {
+    const open = navLinks.style.display === 'flex';
+    navLinks.style.display = open ? 'none' : 'flex';
+    navLinks.style.cssText += 'flex-direction:column; position:absolute; top:64px; left:0; right:0; background:#0a0a0f; padding:20px 28px; border-bottom:1px solid #242236; gap:16px;';
+  });
+
+  // hero mock — cycles through an illustrative push/test/deploy run (dummy data)
+  const steps = [
+    {
+      call: 'marshal.push_code(files, "main")', target: 'GITHUB', verdict: 'passed', label: 'Pushed',
+      body: 'Opened PR #482 on acme/storefront\n3 files changed, 1 commit'
+    },
+    {
+      call: 'marshal.run_tests()', target: 'RUNNER', verdict: 'running', label: 'Running…',
+      body: '$ npm test\n  ✓ checkout flow (14 passed)\n  ✓ inventory sync (6 passed)'
+    },
+    {
+      call: 'marshal.run_tests()', target: 'RUNNER', verdict: 'passed', label: 'Tests passed',
+      body: '$ npm test\n  20 passed, 0 failed — 4.1s'
+    },
+    {
+      call: 'marshal.deploy("vercel")', target: 'VERCEL', verdict: 'live', label: 'Live',
+      body: 'Deployed storefront-prod\nhttps://storefront.acme.com'
+    },
+  ];
+
+  const mockCards = document.getElementById('mockCards');
+  let idx = 0;
+
+  function renderCard(){
+    const s = steps[idx];
+    mockCards.innerHTML = `
+      <div class="mock-card">
+        <div class="mock-card-top">
+          <div>
+            <div class="mock-target">${s.target}</div>
+            <div class="mock-call">${s.call}</div>
+          </div>
+          <span class="verdict ${s.verdict}">${s.label}</span>
+        </div>
+        <div class="mock-body">${s.body}</div>
+      </div>
+    `;
+    idx = (idx + 1) % steps.length;
+  }
+
+  renderCard();
+  setInterval(renderCard, 3400);
+
+  // signup form — no backend wired yet, see README for hooking up a real ESP
+  document.getElementById('signupForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('signupEmail').value;
+    const msg = document.getElementById('formMsg');
+    // TODO: replace with a real endpoint (Formspree / ConvertKit / Mailchimp) before launch.
+    window.location.href = 'mailto:hello@locallogicmanagement.com?subject=Marshal%20early%20access&body=Please%20add%20' + encodeURIComponent(email) + '%20to%20the%20Marshal%20early%20access%20list.';
+    msg.textContent = "Opening your email client to send the request…";
+    msg.className = 'form-msg ok';
+  });
+</script>
+
+</body>
+</html>
